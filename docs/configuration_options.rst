@@ -27,6 +27,13 @@ Connector
   * Default: null
   * Importance: medium
 
+``connection.compression``
+  Defines to use GZip compression on HTTP connection to ElasticSearch. Valid options are ``true`` and ``false``.
+
+  * Type: boolean
+  * Default: false
+  * Importance: low
+
 ``batch.size``
   The number of records to process as a batch when writing to Elasticsearch.
 
