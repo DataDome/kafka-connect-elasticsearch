@@ -117,6 +117,27 @@ public class JestElasticsearchClientTest {
   }
 
   @Test
+  public void compressedConnectsSecurely() {
+    Map<String, String> props = new HashMap<>();
+    props.put(ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG, "http://localhost:9200");
+    props.put(ElasticsearchSinkConnectorConfig.CONNECTION_USERNAME_CONFIG, "elastic");
+    props.put(ElasticsearchSinkConnectorConfig.CONNECTION_PASSWORD_CONFIG, "elasticpw");
+    props.put(ElasticsearchSinkConnectorConfig.TYPE_NAME_CONFIG, "kafka-connect");
+    props.put(ElasticsearchSinkConnectorConfig.CONNECTION_COMPRESSION_CONFIG, "true");
+    JestElasticsearchClient client = new JestElasticsearchClient(props, jestClientFactory);
+
+    ArgumentCaptor<HttpClientConfig> captor = ArgumentCaptor.forClass(HttpClientConfig.class);
+    verify(jestClientFactory).setHttpClientConfig(captor.capture());
+    HttpClientConfig httpClientConfig = captor.getValue();
+    CredentialsProvider credentialsProvider = httpClientConfig.getCredentialsProvider();
+    Credentials credentials = credentialsProvider.getCredentials(AuthScope.ANY);
+    Set<HttpHost> preemptiveAuthTargetHosts = httpClientConfig.getPreemptiveAuthTargetHosts();
+    assertEquals("elastic", credentials.getUserPrincipal().getName());
+    assertEquals("elasticpw", credentials.getPassword());
+    assertEquals(HttpHost.create("http://localhost:9200"), preemptiveAuthTargetHosts.iterator().next());
+  }
+
+  @Test
   public void connectsSecurelyWithEmptyUsernameAndPassword() {
     Map<String, String> props = new HashMap<>();
     props.put(ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG, "http://localhost:9200");
