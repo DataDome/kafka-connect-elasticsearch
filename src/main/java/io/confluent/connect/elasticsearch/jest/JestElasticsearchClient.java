@@ -159,13 +159,16 @@ public class JestElasticsearchClient implements ElasticsearchClient {
         ElasticsearchSinkConnectorConfig.CONNECTION_USERNAME_CONFIG);
     final Password password = config.getPassword(
         ElasticsearchSinkConnectorConfig.CONNECTION_PASSWORD_CONFIG);
-    List<String> address = config.getList(
-        ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG);
+    final boolean compressionEnabled = config.getBoolean(
+            ElasticsearchSinkConnectorConfig.CONNECTION_COMPRESSION_CONFIG);
 
+    List<String> address = config.getList(
+              ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG);
     HttpClientConfig.Builder builder =
         new HttpClientConfig.Builder(address)
             .connTimeout(connTimeout)
             .readTimeout(readTimeout)
+            .requestCompressionEnabled(compressionEnabled)
             .multiThreaded(true);
     if (username != null && password != null) {
       builder.defaultCredentials(username, password.value())
