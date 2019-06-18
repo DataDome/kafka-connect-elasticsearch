@@ -30,6 +30,7 @@ import io.searchbox.action.BulkableAction;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.cluster.NodesInfo;
 import io.searchbox.core.BulkResult;
@@ -55,6 +56,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -195,7 +197,7 @@ public class JestElasticsearchClientTest {
       @Override
       public boolean matches(CreateIndex createIndex) {
         // check the URI as the equals method on CreateIndex doesn't work
-        return createIndex.getURI().equals(INDEX);
+        return createIndex.getURI(ElasticsearchVersion.UNKNOWN).equals(INDEX);
       }
     };
   }
@@ -339,11 +341,11 @@ public class JestElasticsearchClientTest {
   }
 
   @Test
-  public void closes() {
+  public void closes() throws IOException {
     JestElasticsearchClient client = new JestElasticsearchClient(jestClient);
     client.close();
 
-    verify(jestClient).shutdownClient();
+    verify(jestClient).close();
   }
 
   @Test
