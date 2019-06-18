@@ -328,7 +328,7 @@ public class JestElasticsearchClient implements ElasticsearchClient {
   }
 
   // visible for testing
-  protected BulkableAction toBulkableAction(IndexableRecord record) {
+  protected BulkableAction<?> toBulkableAction(IndexableRecord record) {
     // If payload is null, the record was a tombstone and we should delete from the index.
     return record.payload != null ? toIndexRequest(record) : toDeleteRequest(record);
   }
@@ -408,6 +408,10 @@ public class JestElasticsearchClient implements ElasticsearchClient {
   }
 
   public void close() {
-    client.shutdownClient();
+    try {
+      client.close();
+    } catch (IOException e) {
+      log.error("Could not close client", e);
+    }
   }
 }
