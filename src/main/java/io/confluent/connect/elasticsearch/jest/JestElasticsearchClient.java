@@ -154,10 +154,9 @@ public class JestElasticsearchClient implements ElasticsearchClient {
     final Password password = config.getPassword(
         ElasticsearchSinkConnectorConfig.CONNECTION_PASSWORD_CONFIG);
     final boolean compressionEnabled = config.getBoolean(
-            ElasticsearchSinkConnectorConfig.CONNECTION_COMPRESSION_CONFIG);
-
+        ElasticsearchSinkConnectorConfig.CONNECTION_COMPRESSION_CONFIG);
     List<String> address = config.getList(
-              ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG);
+        ElasticsearchSinkConnectorConfig.CONNECTION_URL_CONFIG);
     HttpClientConfig.Builder builder =
         new HttpClientConfig.Builder(address)
             .connTimeout(connTimeout)
